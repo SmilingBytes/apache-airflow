@@ -45,7 +45,7 @@ block-beta
     EXE -- "Pushes TIs" --> QUE
     WORK -- "Pick up TIs" --> QUE
     WORK --> TASK
-    TASK -- "Execute task Instance (TI)" --> WORK
+    TASK -- "Run Python Code" --> WORK
     WORK -- "Update States" --> API
     API -- "Updates" --> META
 
@@ -59,14 +59,7 @@ block-beta
     classDef apiserver fill:#0ea5e9,stroke:#0284c7,stroke-width:2px,color:#ffffff
     classDef task fill:#ea580c,stroke:#c2410c,stroke-width:2px,color:#ffffff
 
-    class USER,QUE user
-    class SCH scheduler
-    class DAG processor
     class META database
-    class WORK worker
-    class EXE executor
-    class API apiserver
-    class TASK task
 ```
 
 ## Task
