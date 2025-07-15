@@ -1,6 +1,14 @@
 # Apache Airflow
+## Table of Contents
 
-## What is Airflow?
+- [Overview](#overview)
+- [Key Terms](#key-terms)
+- [DAG Execution Lifecycle](#dag-execution-lifecycle)
+- [Task Dependencies](#task-dependencies)
+- [Sensor](#sensor)
+
+
+## Overview
 
 Apache Airflow is an open-source platform for developing, scheduling, and monitoring batch-oriented workflows. Airflow’s extensible Python framework enables you to build workflows connecting with virtually any technology. A web-based UI helps you visualize, manage, and debug your workflows. You can run Airflow in a variety of configurations — from a single process on your laptop to a distributed system capable of handling massive workloads.
 
@@ -14,10 +22,10 @@ Apache Airflow is an open-source platform for developing, scheduling, and monito
   - **Transfer:** Perform transfer operations that move data between two systems (e.g. S3toSnowflakeOperator)
   - **Sensor:** Wait for a specific condition to be met (e.g., waiting for a file to be present) before running the next task (e.g. FileSensor)
 
-## How Does Airflow Run a DAG?
+## DAG Execution Lifecycle 
 
 <details>
-  <summary><b>DAG Execution Lifecycle</b></summary>
+  <summary><b>How Does Airflow Run a DAG?</b></summary>
 
   - The DAG File Processor constantly scans the DAGs directory for new files. The default time is every 5 minutes.
   - After the DAG File Processor detects a new DAG, the DAG is processed and serialized into the metadata database.
@@ -64,7 +72,7 @@ block-beta
 
     class META database
 ```
-
+## Task Dependencies
 <details>
   <summary><b>Task Dependencies</b></summary>
 
