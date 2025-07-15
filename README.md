@@ -16,6 +16,18 @@ Apache Airflow is an open-source platform for developing, scheduling, and monito
 
 ## How Does Airflow Run a DAG?
 
+<details>
+  <summary><b>DAG Execution Lifecycle</b></summary>
+
+  - The DAG File Processor constantly scans the DAGs directory for new files. The default time is every 5 minutes.
+  - After the DAG File Processor detects a new DAG, the DAG is processed and serialized into the metadata database.
+  - The scheduler checks for DAGs that are ready to run in the metadata database. The default time is every 5 seconds.
+  - Once a DAG is ready to run, its tasks are put into the executor's queue.
+  - Once a worker is available, it will retrieve a task to execute from the queue.
+  - The worker will then execute the task.
+
+</details>
+
 ```mermaid
 block-beta
     columns 4
@@ -53,10 +65,8 @@ block-beta
     class META database
 ```
 
-## Task Dependencies
-
 <details>
-  <summary>Code Example</summary>
+  <summary><b>Task Dependencies</b></summary>
 
   ```python
   # Imports
@@ -74,10 +84,9 @@ block-beta
 
   # Task Dependencies
   task_a >> task_b
+```
 
-  ```
-</details>
-
+**Diagram:**
 ```mermaid
 stateDiagram-v2
     direction TB
@@ -117,6 +126,7 @@ stateDiagram-v2
     TASK4 --> TASKn
     TASKn --> [*]
 ```
+</details>
 
 ## Sensor
 
