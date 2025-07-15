@@ -1,6 +1,5 @@
 # Apache Airflow
 
-
 ## What is Airflow?
 
 Apache Airflow is an open-source platform for developing, scheduling, and monitoring batch-oriented workflows. Airflow’s extensible Python framework enables you to build workflows connecting with virtually any technology. A web-based UI helps you visualize, manage, and debug your workflows. You can run Airflow in a variety of configurations — from a single process on your laptop to a distributed system capable of handling massive workloads.
@@ -27,39 +26,47 @@ Apache Airflow is an open-source platform for developing, scheduling, and monito
 
 ## How Does Airflow Run a DAG?
 ```mermaid
-flowchart TB
+block-beta
+    columns 4
+    USER["🧑‍💻 User Adds a DAG"]:4
+    space:4
+    DAG[" 📦 DAG File Processor "] space:2 META[(" 🗃️ Metadata Database ")]
+    space:4
+    EXE["⚙️ Executor"] space SCH["⏰ Scheduler"] space
+    space:4
+    QUE["📥 Queue"] space:2 API["🌐 API Server"]
+    space:4
+    TASK["🚀 Task Execution"] space:2 WORK["🔧 Worker"]
 
-%% === User Actions ===
-subgraph UA ["👤 User Actions"]
-  direction LR
-  A1["📝 DAG File (Python)"] --> A2["📦 Placed in DAGs Folder"] --> A3["🔁 Parsed by Scheduler"]
-end
+    DAG -- "Parses" --> USER
+    DAG -- "Serializes" --> META
+    SCH -- "Reads from" --> META
+    SCH -- "Schedule TIs" --> EXE
+    EXE -- "Pushes TIs" --> QUE
+    WORK -- "Pick up TIs" --> QUE
+    WORK --> TASK
+    TASK -- "Execute task Instance (TI)" --> WORK
+    WORK -- "Update States" --> API
+    API -- "Updates" --> META
 
-%% === Scheduler  ===
-subgraph SCH ["⏱️ Airflow Scheduler"]
-  direction LR
-  B1["🧠 Scheduler Parses DAGs"] --> B2["📅 Checks Schedule"] --> B3["⏰ Triggers DAG Run"] --> B4["📥 Creates DAG Run"] --> B5["📤 Tasks Sent to Executor"]
-end
+    %% === Class Definitions ===
+    classDef user fill:#6b7280,stroke:#4b5563,stroke-width:2px,color:#ffffff
+    classDef scheduler fill:#059669,stroke:#047857,stroke-width:2px,color:#ffffff
+    classDef processor fill:#2563eb,stroke:#1e40af,stroke-width:2px,color:#ffffff
+    classDef database fill:#7c3aed,stroke:#6d28d9,stroke-width:2px,color:#ffffff
+    classDef worker fill:#0d9488,stroke:#0f766e,stroke-width:2px,color:#ffffff
+    classDef executor fill:#dc2626,stroke:#b91c1c,stroke-width:2px,color:#ffffff
+    classDef apiserver fill:#0ea5e9,stroke:#0284c7,stroke-width:2px,color:#ffffff
+    classDef task fill:#ea580c,stroke:#c2410c,stroke-width:2px,color:#ffffff
 
-%% === Executor ===
-subgraph EXE ["⚙️ Executor Queue"]
-  direction LR
-  C1["🔧 Celery/K8s/Local Executor"] --> C2["📨 Tasks Dispatched"]
-end
-
-%% === Worker ===
-subgraph WRK ["🧪 Worker Node"]
-  direction LR
-  D1["⚙️ Worker Executes"] --> D2["🗂️ Logs Stored"] --> D3["📬 Status Reported"]
-end
-
-%% === DB/UI  ===
-subgraph DBUI ["🗃️ Metadata Database"]
-  E1["📊 UI Shows Status"]
-end
-
-%% === Block Connections ===
-UA --> SCH --> EXE --> WRK --> DBUI
+    class USER,QUE user
+    class SCH scheduler
+    class DAG processor
+    class META database
+    class WORK worker
+    class EXE executor
+    class API apiserver
+    class TASK task
 ```
 
 ## Task
