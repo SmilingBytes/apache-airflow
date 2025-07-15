@@ -4,27 +4,18 @@
 
 Apache Airflow is an open-source platform for developing, scheduling, and monitoring batch-oriented workflows. Airflow’s extensible Python framework enables you to build workflows connecting with virtually any technology. A web-based UI helps you visualize, manage, and debug your workflows. You can run Airflow in a variety of configurations — from a single process on your laptop to a distributed system capable of handling massive workloads.
 
-## Key Terms:
+## Key Terms
+
 - **DAG:**: A directed acyclical graph that represents a single data pipeline
 - **Task:** An individual unit of work in a DAG
 - **Operator:** The specific work that a Task performs
   There are three main types of operators:
-    - **Action:** Perform a specific action such as running code or a bash command
-    - **Transfer:** Perform transfer operations that move data between two systems
-    - **Sensor:** Wait for a specific condition to be met (e.g., waiting for a file to be present) before running the next task
-
-## Core Components:
-  - **API Server:** FastAPI server serving the UI and handling task execution requests
-  - **Scheduler:** Schedule tasks when dependencies are fulfilled
-  - **DAG File Processor:** Dedicated process for parsing DAGs
-  - **Metadata Database:** A database where all metadata are stored
-  - **Executor:** Defines how tasks are executed
-  - **Queue:** Defines the execution task order
-  - **Worker:** Process executing the tasks, defined by the executor
-  - **Triggerer:** Process running asyncio to support deferrable operators
-
+  - **Action:** Perform a specific action such as running code or a bash command (e.g. PostgresOperator)
+  - **Transfer:** Perform transfer operations that move data between two systems (e.g. S3toSnowflakeOperator)
+  - **Sensor:** Wait for a specific condition to be met (e.g., waiting for a file to be present) before running the next task (e.g. FileSensor)
 
 ## How Does Airflow Run a DAG?
+
 ```mermaid
 block-beta
     columns 4
@@ -62,15 +53,70 @@ block-beta
     class META database
 ```
 
-## Task
+## Task Dependencies
 
-A single unit of work in a DAG.
+<details>
+  <summary>Code Example</summary>
 
-## Operator
-- Action Operators (e.g. PostgresOperator)
-- Transfer Operators (e.g. S3toSnowflakeOperator)
-- Sensor Operators (e.g. FileSensor)
+  ```python
+  # Imports
+  from airflow.sdk import dag, task
+  from airflow.providers.standard.operators.python import PythonOperator
+  from airflow.providers.standard.operators.bash import BashOperator
 
+  # DAG Object
+  @dag(schedule=None, description="A DAG that runs manually")
+  def my_dag():
+
+    # Tasks (Operators)
+    task_1 = PythonOperator(task_id="a",...)
+    task_b = BashOperator(task_id="b", ...)
+
+  # Task Dependencies
+  task_a >> task_b
+
+  ```
+</details>
+
+```mermaid
+stateDiagram-v2
+    direction TB
+
+    DAG: DAG
+
+    TASK1: Task 1
+    state TASK1 {
+        OP1: Sensor Operator
+    }
+
+    TASK2: Task 2
+    state TASK2 {
+        OP2: Action Operator
+    }
+    TASK3: Task 3
+    state TASK3 {
+        PYOP: Action Operator
+    }
+    TASK4: Task 4
+    state TASK4 {
+        OPn: Python Operator
+    }
+
+    TASKn: Task n
+    state TASKn {
+        ACOP: S3toSnowflakeOperator
+    }
+
+    [*] --> DAG
+    DAG --> TASK1
+
+    TASK1 --> TASK2
+    TASK1 --> TASK3
+    TASK2 --> TASK4
+    TASK3 --> TASK4
+    TASK4 --> TASKn
+    TASKn --> [*]
+```
 
 ## Sensor
 
@@ -109,7 +155,3 @@ When using sensors, keep the following in mind to avoid potential performance is
 - Define a meaningful poke_interval based on your use case. There is no need for a task to check a condition every 60 seconds (the default) if you know the total amount of wait time will be 30 minutes.
 
 </details>
-
-  style A1 fill:#fdf6e3,stroke:#657b83,stroke-width:1px
-  style D1 fill:#fce5cd,stroke:#cc0000,stroke-width:1px
-  style B5 fill:#d9ead3,stroke:#38761d,stroke-width:1px
