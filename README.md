@@ -1,4 +1,16 @@
-# Apache Airflow Developer Cheat Sheet
+<picture width="500">
+  <img
+    src="https://github.com/apache/airflow/blob/19ebcac2395ef9a6b6ded3a2faa29dc960c1e635/docs/apache-airflow/img/logos/wordmark_1.png?raw=true"
+    alt="Apache Airflow"
+  />
+</picture>
+
+![Version](https://img.shields.io/badge/📌%20version-3-blue?style=flat-square)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/apache-airflow.svg)](https://pypi.org/project/apache-airflow/)
+![Category](https://img.shields.io/badge/🏷️%20category-Data%20Engineering%2FWorkflow%20Orchestration-orange?style=flat-square)
+[![Docs](https://img.shields.io/badge/🔗%20Docs-airflow.apache.org-blue?style=flat-square)](https://airflow.apache.org)
+[![Slack Status](https://img.shields.io/badge/slack-join_chat-white.svg?logo=slack&style=social)](https://s.apache.org/airflow-slack)
+
 
 ## Table of Contents
 1. [Basic Setup & Configuration](#basic-setup--configuration)
